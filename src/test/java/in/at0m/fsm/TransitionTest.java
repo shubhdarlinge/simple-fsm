@@ -8,8 +8,8 @@ import java.util.List;
 
 public class TransitionTest {
 
-    private static final String FROM_STATE = "from-state";
-    private static final String TO_STATE = "to-state";
+    private static final TestState FROM_STATE = TestState.FROM;
+    private static final TestState TO_STATE = TestState.TO;
     private static final int ACTION_LIST_SIZE = 3;
     private static final List<Action<String>> ACTIONS = Collections.nCopies(ACTION_LIST_SIZE, (context) -> {
     });
@@ -20,12 +20,12 @@ public class TransitionTest {
 
     @Test
     public void Transition_withValidValues_shouldNotThrowException() {
-        Transition<String> transition1 = new Transition<>(FROM_STATE, TO_STATE);
+        Transition<TestState, String> transition1 = new Transition<>(FROM_STATE, TO_STATE);
         Assertions.assertEquals(FROM_STATE, transition1.getFromState());
         Assertions.assertEquals(TO_STATE, transition1.getToState());
         Assertions.assertTrue(transition1.getActions().isEmpty());
 
-        Transition<String> transition2 = new Transition<>(FROM_STATE, TO_STATE, ACTIONS);
+        Transition<TestState, String> transition2 = new Transition<>(FROM_STATE, TO_STATE, ACTIONS);
         Assertions.assertEquals(ACTIONS.size(), transition2.getActions().size());
     }
 
@@ -42,9 +42,9 @@ public class TransitionTest {
 
     @Test
     public void equalsTest() {
-        Transition<String> transition1 = new Transition<>(FROM_STATE, TO_STATE);
-        Transition<String> transition2 = new Transition<>(FROM_STATE, TO_STATE, ACTIONS);
-        Transition<String> transition3 = new Transition<>(TO_STATE, TO_STATE, ACTIONS);
+        Transition<TestState, String> transition1 = new Transition<>(FROM_STATE, TO_STATE);
+        Transition<TestState, String> transition2 = new Transition<>(FROM_STATE, TO_STATE, ACTIONS);
+        Transition<TestState, String> transition3 = new Transition<>(TO_STATE, TO_STATE, ACTIONS);
 
         Assertions.assertEquals(transition1, transition1);
         Assertions.assertNotEquals(transition1, new Object());
@@ -55,9 +55,9 @@ public class TransitionTest {
 
     @Test
     public void hashCodeTest() {
-        Transition<String> transition1 = new Transition<>(FROM_STATE, TO_STATE);
-        Transition<String> transition2 = new Transition<>(FROM_STATE, TO_STATE, ACTIONS);
-        Transition<String> transition3 = new Transition<>(TO_STATE, TO_STATE, ACTIONS);
+        Transition<TestState, String> transition1 = new Transition<>(FROM_STATE, TO_STATE);
+        Transition<TestState, String> transition2 = new Transition<>(FROM_STATE, TO_STATE, ACTIONS);
+        Transition<TestState, String> transition3 = new Transition<>(TO_STATE, TO_STATE, ACTIONS);
 
         Assertions.assertEquals(transition1.hashCode(), transition2.hashCode());
         Assertions.assertNotEquals(transition2.hashCode(), transition3.hashCode());
@@ -66,30 +66,30 @@ public class TransitionTest {
 
     @Test
     public void builderTest() {
-        Transition<String> transition1 = Transition.builder(String.class)
+        Transition<TestState, String> transition1 = Transition.<TestState, String>builder()
                 .fromState(FROM_STATE)
                 .toState(TO_STATE)
                 .addActions(ACTIONS)
                 .addAction(ACTIONS.get(0))
                 .build();
-        Transition<String> transition2 = new Transition<>(FROM_STATE, TO_STATE);
+        Transition<TestState, String> transition2 = new Transition<>(FROM_STATE, TO_STATE);
         Assertions.assertEquals(transition1, transition2);
         Assertions.assertEquals(ACTION_LIST_SIZE + 1, transition1.getActions().size());
 
         NullPointerException npe1 = Assertions.assertThrows(
-                NullPointerException.class, () -> Transition.builder(String.class).fromState(null));
+                NullPointerException.class, () -> Transition.builder().fromState(null));
         Assertions.assertEquals(FROM_STATE_NULL_MESSAGE, npe1.getMessage());
 
         NullPointerException npe2 = Assertions.assertThrows(
-                NullPointerException.class, () -> Transition.builder(String.class).toState(null));
+                NullPointerException.class, () -> Transition.builder().toState(null));
         Assertions.assertEquals(TO_STATE_NULL_MESSAGE, npe2.getMessage());
 
         NullPointerException npe3 = Assertions.assertThrows(
-                NullPointerException.class, () -> Transition.builder(String.class).addAction(null));
+                NullPointerException.class, () -> Transition.builder().addAction(null));
         Assertions.assertEquals(ACTION_NULL_MESSAGE, npe3.getMessage());
 
         NullPointerException npe4 = Assertions.assertThrows(
-                NullPointerException.class, () -> Transition.builder(String.class).addActions(null));
+                NullPointerException.class, () -> Transition.builder().addActions(null));
         Assertions.assertEquals(ACTIONS_NULL_MESSAGE, npe4.getMessage());
     }
 }

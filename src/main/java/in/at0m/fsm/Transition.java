@@ -13,17 +13,17 @@ import java.util.Objects;
  * @param <T> The type on which the state machine is operating.
  * @author shubhdarlinge
  */
-public class Transition<T> {
+public class Transition<S extends Enum<S>, T> {
 
     /**
      * The state from which this transition can happen.
      */
-    private final String fromState;
+    private final S fromState;
 
     /**
      * The state to which this transition will lead.
      */
-    private final String toState;
+    private final S toState;
 
     /**
      * The list of actions that need to be performed before completing this transition.
@@ -38,7 +38,7 @@ public class Transition<T> {
      * @param fromState The state from which this transition can happen.
      * @param toState   The state to which this transition will lead.
      */
-    public Transition(final String fromState, final String toState) {
+    public Transition(final S fromState, final S toState) {
         this(fromState, toState, null);
     }
 
@@ -50,7 +50,7 @@ public class Transition<T> {
      * @param toState   The state to which this transition will lead.
      * @param actions   The actions that need to be performed before completing this transition.
      */
-    public Transition(final String fromState, final String toState, final List<Action<T>> actions) {
+    public Transition(final S fromState, final S toState, final List<Action<T>> actions) {
         Objects.requireNonNull(fromState, "FromState cannot be null");
         Objects.requireNonNull(toState, "ToState cannot be null");
         this.fromState = fromState;
@@ -62,11 +62,10 @@ public class Transition<T> {
      * Returns an instance of {@link Builder}. Individual methods of the builder
      * must be used to construct the {@link Transition} object.
      *
-     * @param clazz The type on which the state machine is operating.
-     * @param <T>   The type on which the state machine is operating.
+     * @param <T> The type on which the state machine is operating.
      * @return An instance of {@link Builder}.
      */
-    public static <T> Builder<T> builder(Class<T> clazz) {
+    public static <S extends Enum<S>, T> Builder<S, T> builder() {
         return new Builder<>();
     }
 
@@ -75,7 +74,7 @@ public class Transition<T> {
      *
      * @return The {@code fromState}.
      */
-    public String getFromState() {
+    public S getFromState() {
         return fromState;
     }
 
@@ -84,7 +83,7 @@ public class Transition<T> {
      *
      * @return The {@code toState}.
      */
-    public String getToState() {
+    public S getToState() {
         return toState;
     }
 
@@ -101,7 +100,7 @@ public class Transition<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Transition)) return false;
-        Transition<?> that = (Transition<?>) o;
+        Transition<?, ?> that = (Transition<?, ?>) o;
         return fromState.equals(that.fromState) && toState.equals(that.toState);
     }
 
@@ -116,7 +115,7 @@ public class Transition<T> {
      * @param <T> The type on which the state machine is operating.
      * @author shubhdarlinge
      */
-    public static class Builder<T> {
+    public static class Builder<S extends Enum<S>, T> {
 
         /**
          * The list of actions that need to be performed before completing this builder's transition.
@@ -126,12 +125,12 @@ public class Transition<T> {
         /**
          * The state from which this builder's transition can happen.
          */
-        private String fromState;
+        private S fromState;
 
         /**
          * The state to which this builder's transition will lead.
          */
-        private String toState;
+        private S toState;
 
         /**
          * Constructs a {@link Builder}.
@@ -146,7 +145,7 @@ public class Transition<T> {
          * @param fromState The state from which this builder's transition can happen.
          * @return {@code this} instance.
          */
-        public Builder<T> fromState(String fromState) {
+        public Builder<S, T> fromState(S fromState) {
             Objects.requireNonNull(fromState, "FromState cannot be null");
             this.fromState = fromState;
             return this;
@@ -158,7 +157,7 @@ public class Transition<T> {
          * @param toState The state to which this builder's transition will lead.
          * @return {@code this} instance.
          */
-        public Builder<T> toState(String toState) {
+        public Builder<S, T> toState(S toState) {
             Objects.requireNonNull(toState, "ToState cannot be null");
             this.toState = toState;
             return this;
@@ -170,7 +169,7 @@ public class Transition<T> {
          * @param action The action to be added.
          * @return {@code this} instance.
          */
-        public Builder<T> addAction(Action<T> action) {
+        public Builder<S, T> addAction(Action<T> action) {
             Objects.requireNonNull(action, "Action cannot be null");
             this.actions.add(action);
             return this;
@@ -182,7 +181,7 @@ public class Transition<T> {
          * @param actions The actions to be added.
          * @return {@code this} instance.
          */
-        public Builder<T> addActions(Collection<Action<T>> actions) {
+        public Builder<S, T> addActions(Collection<Action<T>> actions) {
             Objects.requireNonNull(actions, "Actions cannot be null");
             this.actions.addAll(actions);
             return this;
@@ -193,7 +192,7 @@ public class Transition<T> {
          *
          * @return An instance of {@link Transition}.
          */
-        public Transition<T> build() {
+        public Transition<S, T> build() {
             return new Transition<>(fromState, toState, actions);
         }
     }
