@@ -1,4 +1,4 @@
-package in.at0m.fsm;
+package in.at0m.fsm.transition;
 
 public enum TestState {
     FROM, TO

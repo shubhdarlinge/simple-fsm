@@ -1,4 +1,4 @@
-package in.at0m.fsm;
+package in.at0m.fsm.transition;
 
 /**
  * An action that should be performed while transitioning from one state to another.

@@ -1,4 +1,4 @@
-package in.at0m.fsm;
+package in.at0m.fsm.transition;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package in.at0m.fsm;
+package in.at0m.fsm.transition;
 
 import java.util.ArrayList;
 import java.util.Collection;
