@@ -10,6 +10,7 @@ import java.util.Objects;
  * An instance of this class denotes a possible transition that the state machine may undergo.
  * A transition may have an action or a set of actions that need to be performed before the transition can happen.
  *
+ * @param <S> The enum type that denotes the states.
  * @param <T> The type on which the state machine is operating.
  * @author shubhdarlinge
  */
@@ -62,6 +63,7 @@ public class Transition<S extends Enum<S>, T> {
      * Returns an instance of {@link Builder}. Individual methods of the builder
      * must be used to construct the {@link Transition} object.
      *
+     * @param <S> The enum type that denotes the states.
      * @param <T> The type on which the state machine is operating.
      * @return An instance of {@link Builder}.
      */
@@ -112,6 +114,7 @@ public class Transition<S extends Enum<S>, T> {
     /**
      * A builder pattern for {@link Transition} to make it easier to construct the object.
      *
+     * @param <S> The enum type that denotes the states.
      * @param <T> The type on which the state machine is operating.
      * @author shubhdarlinge
      */
