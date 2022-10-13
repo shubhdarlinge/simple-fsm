@@ -50,7 +50,7 @@ public class Transition<E extends Enum<E>, S extends Enum<S>, T> {
      * This list is always unmodifiable.
      */
     @NonNull
-    private final List<Action<T>> actions;
+    private final List<Action<E, S, T>> actions;
 
     /**
      * Constructs a {@link Transition} instance for the given {@code event} from the
@@ -74,7 +74,7 @@ public class Transition<E extends Enum<E>, S extends Enum<S>, T> {
      * @param actions   The actions that need to be performed before completing this transition.
      */
     public Transition(@NonNull final E event, @NonNull final S fromState,
-                      @NonNull final S toState, final List<Action<T>> actions) {
+                      @NonNull final S toState, final List<Action<E, S, T>> actions) {
         this.event = event;
         this.fromState = fromState;
         this.toState = toState;
@@ -104,7 +104,7 @@ public class Transition<E extends Enum<E>, S extends Enum<S>, T> {
          * @param actions The actions to be added.
          * @return {@code this} instance.
          */
-        public Builder<E, S, T> actions(@NonNull final Collection<Action<T>> actions) {
+        public Builder<E, S, T> actions(@NonNull final Collection<Action<E, S, T>> actions) {
             this.actions.addAll(actions);
             return this;
         }
@@ -115,7 +115,7 @@ public class Transition<E extends Enum<E>, S extends Enum<S>, T> {
          * @param action The action to be added.
          * @return {@code this} instance.
          */
-        public Builder<E, S, T> addAction(@NonNull final Action<T> action) {
+        public Builder<E, S, T> addAction(@NonNull final Action<E, S, T> action) {
             this.actions.add(action);
             return this;
         }

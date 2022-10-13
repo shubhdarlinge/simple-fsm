@@ -11,7 +11,8 @@ public class TransitionTest {
     private static final TestEvent EVENT = TestEvent.TRANSITION;
     private static final TestState FROM_STATE = TestState.FROM;
     private static final TestState TO_STATE = TestState.TO;
-    private static final List<Action<String>> ACTIONS = Collections.nCopies(3, (context) -> {});
+    private static final List<Action<TestEvent, TestState, String>> ACTIONS = Collections.nCopies(
+            3, new TestAction());
 
     @Test
     public void Transition_withValidValues_shouldNotThrowException() {

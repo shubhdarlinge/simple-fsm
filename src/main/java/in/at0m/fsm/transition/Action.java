@@ -2,18 +2,25 @@ package in.at0m.fsm.transition;
 
 /**
  * An action that should be performed while transitioning from one state to another.
- * When an action is run, it is provided with a context parameter which is an instance
- * of the type the state machine is operating on.
  *
+ * @param <E> The enum type that denotes the events.
+ * @param <S> The enum type that denotes the states.
  * @param <T> The type on which the state machine is operating.
  * @author shubhdarlinge
  */
-public interface Action<T> {
+public interface Action<E extends Enum<E>, S extends Enum<S>, T> {
 
     /**
-     * The method called when this action is performed.
+     * Called <em>before</em> the transition is completed.
      *
-     * @param context The context parameter.
+     * @param actionContext The context information for transition.
      */
-    void run(T context);
+    void before(ActionContext<E, S, T> actionContext);
+
+    /**
+     * Called <em>after</em> the transition is completed.
+     *
+     * @param actionContext The context information for transition.
+     */
+    void after(ActionContext<E, S, T> actionContext);
 }
