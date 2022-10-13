@@ -72,12 +72,17 @@ public class TransitionTest {
 
     @Test
     public void nullParamTest() {
-        Assertions.assertThrows(NullPointerException.class, () -> new Transition<TestEvent, TestState, String>(null, FROM_STATE, TO_STATE, null));
-        Assertions.assertThrows(NullPointerException.class, () -> new Transition<TestEvent, TestState, String>(EVENT, null, TO_STATE, null));
-        Assertions.assertThrows(NullPointerException.class, () -> new Transition<TestEvent, TestState, String>(EVENT, FROM_STATE, null, null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> new Transition<TestEvent, TestState, String>(null, FROM_STATE, TO_STATE, null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> new Transition<TestEvent, TestState, String>(EVENT, null, TO_STATE, null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> new Transition<TestEvent, TestState, String>(EVENT, FROM_STATE, null, null));
 
-        Assertions.assertThrows(NullPointerException.class, () -> Transition.<TestEvent, TestState, String>builder().actions(null));
-        Assertions.assertThrows(NullPointerException.class, () -> Transition.<TestEvent, TestState, String>builder().addAction(null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> Transition.<TestEvent, TestState, String>builder().actions(null));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> Transition.<TestEvent, TestState, String>builder().addAction(null));
     }
 
     private void assertTransitionFullyEquals(
@@ -86,5 +91,26 @@ public class TransitionTest {
         Assertions.assertSame(transition1.getFromState(), transition2.getFromState());
         Assertions.assertSame(transition1.getToState(), transition2.getToState());
         Assertions.assertEquals(transition1.getActions(), transition2.getActions());
+    }
+
+    private enum TestEvent {
+        TRANSITION
+    }
+
+    private enum TestState {
+        FROM, TO
+    }
+
+    private static class TestAction implements Action<TestEvent, TestState, String> {
+
+        @Override
+        public void before(ActionContext<TestEvent, TestState, String> actionContext) {
+
+        }
+
+        @Override
+        public void after(ActionContext<TestEvent, TestState, String> actionContext) {
+
+        }
     }
 }
