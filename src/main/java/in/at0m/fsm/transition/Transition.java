@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +23,7 @@ import java.util.List;
  */
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 @Builder(builderClassName = "Builder", toBuilder = true)
 public class Transition<E extends Enum<E>, S extends Enum<S>, T> {
 
@@ -30,6 +32,7 @@ public class Transition<E extends Enum<E>, S extends Enum<S>, T> {
      */
     @NonNull
     @EqualsAndHashCode.Include
+    @ToString.Include
     private final E event;
 
     /**
@@ -37,12 +40,14 @@ public class Transition<E extends Enum<E>, S extends Enum<S>, T> {
      */
     @NonNull
     @EqualsAndHashCode.Include
+    @ToString.Include
     private final S fromState;
 
     /**
      * The state to which this transition will lead.
      */
     @NonNull
+    @ToString.Include
     private final S toState;
 
     /**
