@@ -49,6 +49,45 @@ public class SimpleStateMachineTest {
         Assertions.assertEquals(4, trafficLight.getCount());
     }
 
+    @Test
+    public void builderTest() {
+        List<Transition<TrafficLight.Event, TrafficLight.Color, TrafficLight>> transitions
+                = TrafficLight.buildTransitions();
+        Transition<TrafficLight.Event, TrafficLight.Color, TrafficLight> transition = transitions.remove(0);
+
+        SimpleStateMachine<TrafficLight.Event, TrafficLight.Color, TrafficLight> trafficLight
+                = SimpleStateMachine.<TrafficLight.Event, TrafficLight.Color, TrafficLight>builder()
+                .initialState(TrafficLight.Color.RED)
+                .transitions(transitions)
+                .addTransition(transition)
+                .build();
+        Assertions.assertEquals(TrafficLight.Color.RED, trafficLight.getCurrentState());
+        Assertions.assertEquals(TrafficLight.buildTransitions().size(), trafficLight.getTransitions().size());
+    }
+
+    @Test
+    public void nullParamTest() {
+        Assertions.assertThrows(NullPointerException.class,
+                () -> new SimpleStateMachine<TrafficLight.Event, TrafficLight.Color, TrafficLight>(
+                        null, Collections.emptyList()));
+
+        Assertions.assertThrows(NullPointerException.class,
+                () -> new SimpleStateMachine<TrafficLight.Event, TrafficLight.Color, TrafficLight>(
+                        TrafficLight.Color.RED, null));
+
+        SimpleStateMachine<TrafficLight.Event, TrafficLight.Color, TrafficLight> trafficLight
+                = new SimpleStateMachine<>(TrafficLight.Color.RED, Collections.emptyList());
+        Assertions.assertThrows(NullPointerException.class, () -> trafficLight.canConsume(null));
+        Assertions.assertThrows(NullPointerException.class, () -> trafficLight.consume(null, new TrafficLight()));
+        Assertions.assertThrows(NullPointerException.class, () -> trafficLight.consume(TrafficLight.Event.GO, null));
+
+        Assertions.assertThrows(NullPointerException.class, () -> SimpleStateMachine
+                .<TrafficLight.Event, TrafficLight.Color, TrafficLight>builder().transitions(null));
+
+        Assertions.assertThrows(NullPointerException.class, () -> SimpleStateMachine
+                .<TrafficLight.Event, TrafficLight.Color, TrafficLight>builder().addTransition(null));
+    }
+
     /**
      * The state machine for this class looks like this:
      * +---+                            +----------+

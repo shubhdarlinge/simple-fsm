@@ -70,6 +70,16 @@ public class TransitionTest {
         assertTransitionFullyEquals(transition1, transition2);
     }
 
+    @Test
+    public void nullParamTest() {
+        Assertions.assertThrows(NullPointerException.class, () -> new Transition<TestEvent, TestState, String>(null, FROM_STATE, TO_STATE, null));
+        Assertions.assertThrows(NullPointerException.class, () -> new Transition<TestEvent, TestState, String>(EVENT, null, TO_STATE, null));
+        Assertions.assertThrows(NullPointerException.class, () -> new Transition<TestEvent, TestState, String>(EVENT, FROM_STATE, null, null));
+
+        Assertions.assertThrows(NullPointerException.class, () -> Transition.<TestEvent, TestState, String>builder().actions(null));
+        Assertions.assertThrows(NullPointerException.class, () -> Transition.<TestEvent, TestState, String>builder().addAction(null));
+    }
+
     private void assertTransitionFullyEquals(
             final Transition<?, ?, ?> transition1, final Transition<?, ?, ?> transition2) {
         Assertions.assertSame(transition1.getEvent(), transition2.getEvent());

@@ -65,7 +65,7 @@ public class Transition<E extends Enum<E>, S extends Enum<S>, T> {
      * @param fromState The state from which this transition can happen.
      * @param toState   The state to which this transition will lead.
      */
-    public Transition(@NonNull final E event, @NonNull final S fromState, @NonNull final S toState) {
+    public Transition(final E event, final S fromState, final S toState) {
         this(event, fromState, toState, null);
     }
 
