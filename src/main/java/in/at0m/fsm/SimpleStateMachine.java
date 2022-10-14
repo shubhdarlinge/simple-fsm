@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
  * happen from one state to another upon consuming a particular event. When a transition is performed,
  * the {@link in.at0m.fsm.transition.Action}(s) registered with the transition is also executed.
  *
- * @param <E> {@inheritDoc}
- * @param <S> {@inheritDoc}
- * @param <T> {@inheritDoc}
+ * @param <E> The enum type that denotes the events.
+ * @param <S> The enum type that denotes the states.
+ * @param <T> The type on which the state machine is operating.
  * @author shubhdarlinge
  */
 public class SimpleStateMachine<E extends Enum<E>, S extends Enum<S>, T> implements StateMachine<E, S, T> {

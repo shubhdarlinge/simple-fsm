@@ -8,9 +8,9 @@ package in.at0m.fsm.exception;
 public class InvalidTransitionException extends RuntimeException {
 
     /**
-     * {@inheritDoc}
+     * Creates an instance of InvalidTransitionException with given message.
      *
-     * @param s {@inheritDoc}
+     * @param s The exception message.
      */
     public InvalidTransitionException(String s) {
         super(s);
