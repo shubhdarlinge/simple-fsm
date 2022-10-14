@@ -13,6 +13,28 @@
     <description>A simple finite state machine library.</description>
     <url>https://github.com/shubhdarlinge/simple-fsm</url>
 
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Shubham Darlinge</name>
+            <email>shubh.darlinge@gmail.com</email>
+            <organization>at0m</organization>
+            <organizationUrl>https://at0m.in</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/shubhdarlinge/simple-fsm.git</connection>
+        <developerConnection>scm:git:ssh://github.com:shubhdarlinge/simple-fsm.git</developerConnection>
+        <url>http://github.com/shubhdarlinge/simple-fsm/tree/main</url>
+    </scm>
+
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
