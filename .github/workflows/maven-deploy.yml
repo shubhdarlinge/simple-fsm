@@ -5,7 +5,19 @@ on:
     branches: [ "main" ]
 
 jobs:
+  get-project-version:
+    name: Get Maven Project Version
+    uses: ./.github/workflows/get-project-version.yml
+  is-snapshot-version:
+    name: Is SNAPSHOT Version
+    needs: get-project-version
+    uses: ./.github/workflows/is-snapshot-version.yml
+    with:
+      project_version: ${{ needs.get-project-version.outputs.project_version }}
   deploy:
+    name: Deploy SNAPSHOT with Maven
+    needs: is-snapshot-version
+    if: needs.is-snapshot-version.outputs.is_snapshot_version == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -21,12 +33,7 @@ jobs:
           server-password: OSSRH_TOKEN
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
-      - name: Retrieve project version
-        run: echo "PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_ENV
-      - name: Check if version is a SNAPSHOT
-        run: echo "IS_SNAPSHOT_VERSION=$(if [[ "$PROJECT_VERSION" == *-SNAPSHOT ]]; then echo true; else echo false; fi)" >> $GITHUB_ENV
       - name: Deploy with Maven
-        if: ${{ env.IS_SNAPSHOT_VERSION == 'true' }}
         run: mvn --batch-mode deploy
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}

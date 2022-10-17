@@ -1,0 +1,24 @@
+name: Is SNAPSHOT Version
+
+on:
+  workflow_call:
+    inputs:
+      project_version:
+        description: The project version
+        required: true
+        type: string
+    outputs:
+      is_snapshot_version:
+        description: Flag that indicates whether the given version is snapshot version
+        value: ${{ jobs.is-snapshot-version.outputs.is_snapshot_version }}
+
+jobs:
+  is-snapshot-version:
+    name: Is SNAPSHOT Version
+    runs-on: ubuntu-latest
+    outputs:
+      is_snapshot_version: ${{ steps.is-snapshot-version.outputs.is_snapshot_version }}
+    steps:
+      - id: is-snapshot-version
+        name: Is SNAPSHOT Version
+        run: echo "is_snapshot_version=$(if [[ ${{ inputs.project_version }} == *-SNAPSHOT ]]; then echo true; else echo false; fi)" >> $GITHUB_OUTPUT

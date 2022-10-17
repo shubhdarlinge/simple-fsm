@@ -1,0 +1,21 @@
+name: Get Maven Project Version
+
+on:
+  workflow_call:
+    outputs:
+      project_version:
+        description: The project version
+        value: ${{ jobs.get-project-version.outputs.project_version }}
+
+jobs:
+  get-project-version:
+    name: Get Project Version
+    runs-on: ubuntu-latest
+    outputs:
+      project_version: ${{ steps.get-project-version.outputs.project_version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - id: get-project-version
+        name: Get Project Version
+        run: echo "project_version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
