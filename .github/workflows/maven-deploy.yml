@@ -8,16 +8,10 @@ on:
       - 'completed'
 
 jobs:
-  get-project-version:
-    name: Get Maven Project Version
-    if: github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success'
-    uses: ./.github/workflows/get-project-version.yml
   is-snapshot-version:
     name: Is SNAPSHOT Version
-    needs: get-project-version
+    if: github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success'
     uses: ./.github/workflows/is-snapshot-version.yml
-    with:
-      project_version: ${{ needs.get-project-version.outputs.project_version }}
   deploy:
     name: Deploy SNAPSHOT with Maven
     needs: is-snapshot-version
