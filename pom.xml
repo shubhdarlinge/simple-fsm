@@ -6,7 +6,7 @@
 
     <groupId>in.at0m</groupId>
     <artifactId>simple-fsm</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>Simple FiniteStateMachine Library</name>
