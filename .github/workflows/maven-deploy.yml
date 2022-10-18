@@ -8,14 +8,14 @@ on:
       - 'completed'
 
 jobs:
-  is-snapshot-version:
-    name: Is SNAPSHOT Version
+  get-project-version:
+    name: Get Maven Project Version
     if: github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success'
-    uses: ./.github/workflows/is-snapshot-version.yml
+    uses: ./.github/workflows/get-project-version.yml
   deploy:
     name: Deploy SNAPSHOT with Maven
-    needs: is-snapshot-version
-    if: needs.is-snapshot-version.outputs.is_snapshot_version == 'true'
+    needs: get-project-version
+    if: endsWith(needs.get-project-version.outputs.project_version, '-SNAPSHOT')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
