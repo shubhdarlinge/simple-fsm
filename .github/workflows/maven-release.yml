@@ -1,0 +1,70 @@
+name: Publish Release to Maven
+
+on:
+  workflow_run:
+    workflows: [ "Maven Verify" ]
+    branches: [ "main" ]
+    types:
+      - 'completed'
+
+jobs:
+  get-project-version:
+    name: Get Maven Project Version
+    if: github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success'
+    uses: ./.github/workflows/get-project-version.yml
+  release:
+    name: Release version with Maven
+    needs: get-project-version
+    if: endsWith(needs.get-project-version.outputs.project_version, '-SNAPSHOT') == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+          server-id: ossrh
+          server-username: OSSRH_USERNAME
+          server-password: OSSRH_TOKEN
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      - name: Build artifacts with Maven
+        run: mvn --batch-mode verify
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      - name: Release a new version in GitHub
+        uses: ncipollo/release-action@v1
+        with:
+          tag: 'v${{ needs.get-project-version.outputs.project_version }}'
+          artifacts: ./target/*.jar
+      - name: Release with Maven
+        run: mvn --batch-mode deploy
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      - name: Increment project version to SNAPSHOT version
+        run: |
+          PROJECT_VERSION=${{ needs.get-project-version.outputs.project_version }}
+          last_component=$(echo "$PROJECT_VERSION" | sed 's/\./\n/g' | tail -n 1)
+          incremented_last_component=$(echo "$last_component + 1" | bc)
+          echo "NEW_PROJECT_VERSION=$(echo $PROJECT_VERSION | sed 's/\./\n/g' | head -n -1 | tr '\n' '.')$incremented_last_component-SNAPSHOT" >> $GITHUB_ENV
+      - name: Update project version in Maven
+        run: mvn org.codehaus.mojo:versions-maven-plugin:2.12.0:set -DnewVersion=$NEW_PROJECT_VERSION
+      - name: Remove backup files
+        run: rm 'pom.xml.versionsBackup'
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          title: '[Automated] Project version upgrade to ${{ env.NEW_PROJECT_VERSION }}'
+          commit-message: '[Automated] Project version update to ${{ env.NEW_PROJECT_VERSION }}'
+          body: 'Project version update to ${{ env.NEW_PROJECT_VERSION }}'
+          reviewers: ${{ github.actor }}
+          base: ${{ github.event.repository.default_branch }}
+          branch: 'create-pull-request/${{ env.NEW_PROJECT_VERSION }}'
+          delete-branch: true
