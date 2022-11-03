@@ -21,7 +21,7 @@ public class SimpleStateMachineTest {
     }
 
     @Test
-    public void conConsumeTest() {
+    public void canConsumeTest() {
         TrafficLight trafficLight = new TrafficLight();
 
         Assertions.assertTrue(trafficLight.canConsume(TrafficLight.Event.GO_WARNING));
