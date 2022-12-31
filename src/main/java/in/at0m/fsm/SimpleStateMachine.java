@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 /**
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
  */
 public class SimpleStateMachine<E extends Enum<E>, S extends Enum<S>, T> implements StateMachine<E, S, T> {
 
+    private final ReadWriteLock lock;
     /**
      * The state transition table in form of a map of event and source state to transition object.
      */
@@ -49,9 +52,10 @@ public class SimpleStateMachine<E extends Enum<E>, S extends Enum<S>, T> impleme
     @lombok.Builder(builderClassName = "Builder")
     public SimpleStateMachine(@NonNull final S initialState,
                               @NonNull final Collection<Transition<E, S, T>> transitions) {
-        this.currentState = initialState;
+        this.lock = new ReentrantReadWriteLock();
         this.transitions = Collections.unmodifiableMap(transitions.stream()
                 .collect(Collectors.toMap(TransitionSource::fromTransition, transition -> transition)));
+        this.currentState = initialState;
     }
 
     /**
@@ -60,7 +64,10 @@ public class SimpleStateMachine<E extends Enum<E>, S extends Enum<S>, T> impleme
      * @return A collection of {@link Transition} that can be performed by this state machine.
      */
     public Collection<Transition<E, S, T>> getTransitions() {
-        return Collections.unmodifiableCollection(transitions.values());
+        lock.readLock().lock();
+        Collection<Transition<E, S, T>> transitions = Collections.unmodifiableCollection(this.transitions.values());
+        lock.readLock().unlock();
+        return transitions;
     }
 
     /**
@@ -71,7 +78,10 @@ public class SimpleStateMachine<E extends Enum<E>, S extends Enum<S>, T> impleme
      */
     @Override
     public boolean canConsume(@NonNull final E event) {
-        return transitions.containsKey(new TransitionSource<>(event, currentState));
+        lock.readLock().lock();
+        boolean canConsume = transitions.containsKey(new TransitionSource<>(event, currentState));
+        lock.readLock().unlock();
+        return canConsume;
     }
 
     /**
@@ -92,12 +102,14 @@ public class SimpleStateMachine<E extends Enum<E>, S extends Enum<S>, T> impleme
             throw new InvalidTransitionException(
                     String.format("Transition from state %s not valid for event %s", currentState, event));
         }
+        lock.writeLock().lock();
         final Transition<E, S, T> transition = transitions.get(new TransitionSource<>(event, currentState));
         final ActionContext<E, S, T> actionContext = new ActionContext<>(
                 event, currentState, transition.getToState(), context);
         transition.getActions().forEach(action -> action.before(actionContext));
         currentState = transition.getToState();
         transition.getActions().forEach(action -> action.after(actionContext));
+        lock.writeLock().unlock();
         return currentState;
     }
 
